@@ -1,0 +1,5 @@
+.directory
+.env
+*.md.backup
+nextcloud_data/
+postgres_db/

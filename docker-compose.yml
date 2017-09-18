@@ -1,0 +1,39 @@
+version: '2'
+
+services:
+  db:
+    image: postgres:9.6-alpine
+    restart: always
+    volumes:
+      - ${POSTGRES_PATH}:/var/lib/mysql
+    environment:
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=nextcloud
+
+  nextcloud:
+    build: ./nextcloud
+    restart: always
+    depends_on:
+        - db
+    ports:
+      - 8181:80
+    links:
+      - db
+    volumes:
+      - ${NEXTCLOUD_PATH}/config:/var/www/html/config
+      - ${NEXTCLOUD_PATH}/data:/var/www/html/data
+
+  code:
+    build: ./CODE
+    restart: always
+    ports:
+        - 8182:9980
+    environment:
+       - domain=collabora.${NEXTCLOUD_URL}
+       - username=test
+       - password=test
+       - servername=localhost:8182
+    cap_add:
+        - MKNOD
+    # https://help.nextcloud.com/t/how-o-install-collobora-without-domain-and-ssl/5995/2
