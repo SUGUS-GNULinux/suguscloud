@@ -1,2 +1,2 @@
-FROM nextcloud:12.0-apache
+FROM nextcloud:12.0.3-apache
 

@@ -2,7 +2,7 @@ version: '2'
 
 services:
   db:
-    image: postgres:9.6-alpine
+    image: postgres:9.6.5-alpine
     restart: always
     volumes:
       - ${POSTGRES_PATH}:/var/lib/mysql
@@ -16,10 +16,14 @@ services:
     restart: always
     depends_on:
         - db
+        - code
+        - draw_io
     ports:
       - 8181:80
     links:
       - db
+      - code
+      - draw_io
     volumes:
       - ${NEXTCLOUD_PATH}/config:/var/www/html/config
       - ${NEXTCLOUD_PATH}/data:/var/www/html/data
@@ -30,10 +34,19 @@ services:
     ports:
         - 8182:9980
     environment:
-       - domain=collabora.${NEXTCLOUD_URL}
+       - domain=${CODE_URL}
+#       - domain=collabora.${NEXTCLOUD_URL}
        - username=test
        - password=test
        - servername=localhost:8182
     cap_add:
         - MKNOD
     # https://help.nextcloud.com/t/how-o-install-collobora-without-domain-and-ssl/5995/2
+
+  draw_io:
+    build: ./draw.io
+    restart: always
+    ports:
+      - 8183:80
+    #environment:
+      #- NODE_ENV="true"
